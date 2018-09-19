@@ -27,10 +27,10 @@ export class MyApp {
     this.pages = [
       { title: 'Home', component: HomePage, icone:"home" },
       { title: 'Programação Geral', component: 'page-progs-geral', icone:"calendar" },
-      { title: 'Mapa', component: 'page-mapa', icone:"md-map" },
       { title: 'Maratonas', component: 'page-progs-maratonas', icone:"md-trophy" },
       { title: 'Palestrantes', component: 'palestrantes', icone:"md-contacts" },
-      { title: 'Sobre', component: 'page-sobre', icone:"md-list-box" },
+      { title: 'Adicionar palestrante', component: 'page-add-palestrante', icone:"md-person-add" },
+      { title: 'Adicionar programação', component: 'page-add-prog', icone:"md-add-circle" }
     ];
 
   }

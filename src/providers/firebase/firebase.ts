@@ -107,5 +107,31 @@ export class FirebaseProvider {
 		
 		let dataNow:any = dia +"-"+ mes +"-"+ ano;
 		return dataNow;
+  }
+  
+  uploadFotoPerfil(imageuid,myPhoto){ 
+    let fotoPerfilRef = firebase.storage().ref('image/');
+    return new Promise((resolve, reject)=>{
+      let uploadTask = fotoPerfilRef.child(imageuid).child('perfil.jpeg')
+      .putString(myPhoto, 'base64', { contentType: 'image/jpeg' });
+      uploadTask.on('state_changed',(savedPicture:any) => {
+        let progress:any = (savedPicture.bytesTransferred / savedPicture.totalBytes) * 100;
+        progress = parseInt(progress);
+        console.log('Upload is ' + progress + '% done');
+      }, error => {
+        resolve({status:"Erro"});
+			},()=>{
+        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL)=>{
+          console.log('File available at', downloadURL);
+          resolve({status:"OK",body:downloadURL})
+        });
+      });
+    });
+  }
+
+  delImage(image):Promise<any>{
+		return firebase.storage().refFromURL(image).delete().then(function() {
+		}).catch(function(error){});
 	}
+
 }

@@ -68,6 +68,12 @@
 	width: 30px;
 }
 
+.edit{
+	position: fixed;
+	z-index: 101; 
+	bottom: 5px;
+}
+
 #centro{
 	display: flex;
 	justify-content: center;
