@@ -1,0 +1,29 @@
+<ion-menu [content]="content">
+  <ion-content id="fundo_menu">
+      <div class="logo_menu">
+          <img  id="logo" src="assets/images/logo-menu.png">  
+      </div>
+    <ion-list>
+      <button id="fundo_menu" menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">
+          <ion-icon name="{{p.icone}}"></ion-icon> {{p.title}}
+      </button>
+    </ion-list>
+  </ion-content>
+  <ion-footer >
+    <ion-row id="footer">
+        <p id="info">
+            (96)99999-9999 <br> expotec.amapa@gmail.com
+        </p>
+    </ion-row>
+    <ion-row id="footer">
+      <div id="RS">
+          <img id="RSlogo" (click)="redeSocial('https://www.facebook.com/Expotec-500141060456822/')" src="assets/images/face.png">
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <img id="RSlogo" (click)="redeSocial('https://instagram.com/expotec.ap?utm_source=ig_profile_share&igshid=pqon6u0ym4cw')" src="assets/images/insta.png">
+      </div>
+    </ion-row>
+  </ion-footer>
+</ion-menu>
+
+<!-- Disable swipe-to-go-back because it's poor UX to combine STGB with side menus -->
+<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>

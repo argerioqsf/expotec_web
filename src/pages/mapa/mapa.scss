@@ -1,0 +1,23 @@
+page-mapa {
+    #mapa{
+        height: auto;
+        width: 100%;
+    }
+
+    #centroMapa{
+        background-image: url("assets/images/mapa.jpg");
+        background-repeat: no-repeat;
+        height: auto;
+        width: 100%;
+        background-color: #cccccc;
+    }
+
+    #legenda{
+        height: auto;
+        width: 100%;
+    }
+
+    #legendaP{
+        padding: 15px;
+    }
+}
