@@ -32,6 +32,7 @@ export class AddPalestrantePage {
   public loading2: Loading;
   cargos:any = [];
   setores:any = [];
+  arquivo:any = null;
   constructor(public navCtrl: NavController, 
               public navParams: NavParams,
               formBuilder: FormBuilder,
@@ -41,13 +42,15 @@ export class AddPalestrantePage {
               private actionSheetCtrl: ActionSheetController,
               private camera: Camera,
               private menuCtrl: MenuController) {
-                
   this.imageuid = this.generateUUID();
   this.signupForm = formBuilder.group({
     email: ["",
         Validators.compose([Validators.required, EmailValidator.isValid])
         ],
     desc: ["",
+          Validators.compose([Validators.minLength(1), Validators.required])
+        ],
+    formacao: ["",
           Validators.compose([Validators.minLength(1), Validators.required])
         ],
     nome: ["",
@@ -63,6 +66,38 @@ export class AddPalestrantePage {
     console.log('ionViewDidLoad AddPalestrantePage');
   }
 
+  atualizaArquivo(event){
+      this.arquivo = event.srcElement.files[0];
+      console.log("event: ",event);
+      console.log("event.srcElement: ",event.srcElement.webkitRelativePath);
+      this.enviarArquivo();
+      
+  }
+
+  enviarArquivo(){
+    if(this.arquivo != null){
+      let metadata = {
+        contentType: this.arquivo.type
+      };
+      let name = this.imageuid;
+      let upload = this.firebaseProvider.imagemUpload().child(name+".jpg").put(this.arquivo,metadata);
+      upload.on('state_changed',(savedPicture:any) => {
+        let progress:any = (savedPicture.bytesTransferred / savedPicture.totalBytes) * 100;
+        progress = parseInt(progress);
+        console.log('Upload is ' + progress + '% done');
+      }, error => {
+        console.log("Erro imagemupload");
+			},()=>{
+        upload.snapshot.ref.getDownloadURL().then((downloadURL)=>{
+          console.log('File available at', downloadURL);
+          this.imageURL = downloadURL;
+        console.log("OK imagemupload");
+        });
+      });
+
+    }
+  }
+  
   private generateUUID(): any {
     var d = new Date().getTime();
     var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx'.replace(/[xy]/g, function (c) {
@@ -84,8 +119,61 @@ export class AddPalestrantePage {
         console.log("foto deletada");
       });
       }
-	}
+  }
+  
+  addPalestrante(){
+    if (this.signupForm.valid){
+      let loading = this.loadingCtrl.create({
+        spinner: 'ios',
+        duration: 30000
+      });
+      loading.present();
+      let ok = false;
+      this.signupForm.value.imagem = this.imageURL;
+      this.signupForm.value.imagemUid = this.imageuid;
+    console.log("singupForm: ",this.signupForm.value);
+    let id = this.generateUUID();
+    this.signupForm.value.id = id;
+    console.log("signupForm.value: ",this.signupForm.value); 
+      this.firebaseProvider.set("palestrantes/"+this.signupForm.value.id,this.signupForm.value).then(()=>{
+        console.log("this.signupForm.value: ",this.signupForm.value);
+        ok = true;
+        this.cont = true;
+        this.navCtrl.setRoot("palestrantes");
+        loading.dismiss();
+      },error=>{
+        loading.dismiss();
+        let alert = this.alertCtrl.create({
+          title:"Houve um erro na comunicação com o servidor",
+          subTitle:"não foi possivel efetuar a alteração: "+ error,
+        });
+        alert.present();
+      });
+    loading.onDidDismiss(() => {
+      console.log('Ok : ',ok);
+      if(ok == false){
+        let alert = this.alertCtrl.create({
+          title:"Houve um erro na comunicação com o servidor",
+          subTitle:"verifique sua internet",
+        });
+        alert.present();
+      }
+      if(ok == true){
+        let alert = this.alertCtrl.create({
+          title:"Palestrante cadastrado com sucesso!"
+        });
+        alert.present();
+        }
+      });
+    }else{
+      let alert = this.alertCtrl.create({
+        title:"Preencha os campos corretamente."
+      });
+      alert.present();
+    }
+  }
 
+  /*
   presentActionSheet() {
     let actionSheet = this.actionSheetCtrl.create({
       title: 'Adicionar foto',
@@ -176,6 +264,6 @@ export class AddPalestrantePage {
         alert.present();
       }
     });
-	}
+  }*/
 
 }

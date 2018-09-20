@@ -43,7 +43,25 @@ page-add-palestrante {
         height: auto;
         margin-top: 5px;
         background-color: rgba(255, 255, 255, 0);
+        justify-content: space-between;
     }
+
+    #center:hover {
+        
+        background-color: rgba(22, 119, 136, 0.589);
+    }
+
+    .visually-hidden {
+        position: absolute !important;
+        height: 1px;
+        width: 1px;
+        overflow: hidden;
+        clip: rect(1px, 1px, 1px, 1px);
+      }
+      
+      input.visually-hidden:focus + label {
+        outline: thin dotted;
+      }
     
     #fotos{
         height: 100px;
@@ -58,5 +76,14 @@ page-add-palestrante {
 
     #add{
         width: 30%;
+    }
+
+    #myInput{
+        background: #eee;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        list-style-type: none;
+        border: 1px solid black;
     }
 }

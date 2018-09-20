@@ -19,7 +19,6 @@ import { BackgroundMode } from '@ionic-native/background-mode';
 })
 export class PalestrantesPage {
   palestrantes = null;
-  filtro = "Todos";
   palestrantesSnap = [];
   constructor(public navCtrl: NavController,
               private firebaseProvider: FirebaseProvider,

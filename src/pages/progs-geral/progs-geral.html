@@ -14,28 +14,31 @@
 </ion-header>
 
 <ion-content  id="fundo_app">
-  <h6 *ngIf="progs != null && progs.length == 0 && filtro == 'Todos'" id="horario" text-center>Não há programações</h6>
-  <h6 *ngIf="progs != null && progs.length == 0 && filtro != 'Todos'" id="horario" text-center>Não há progrmações hoje nesse local</h6>
-  <div *ngFor="let prog of progs">
-    
-    <h6 id="horario">{{prog.horaI}}</h6>
-    <div *ngIf=" progs != null && prog.progs.length != 0" id="fT">
-        <div *ngFor="let prog2 of prog.progs">
-          <div *ngIf="progs != null && prog2.local == filtro || filtro == 'Todos'">
-            <div (click)="info(prog2)" id="card">
-                  <p id="detalhe" [ngStyle]="{'border-left': '6px solid ' + prog2.cor}">
-                      <strong>{{prog2.titulo}}</strong><br>
-                      {{prog2.tipo}} <br>
-                      {{prog2.horario}}, <strong><a id="local">{{prog2.local}}</a></strong>
-                  </p>
-                  <div id="centro">
-                    <div *ngIf="prog.progs.length > 1" id="divisor"></div>
-                  </div>
-            </div>
-          </div>
-        </div>
-    </div>
+    <div id="homeWeb">
+      <div id="corpo">
+        <h6 *ngIf="progs != null && progs.length == 0 && filtro == 'Todos'" id="horario" text-center>Não há programações</h6>
+        <h6 *ngIf="progs != null && progs.length == 0 && filtro != 'Todos'" id="horario" text-center>Não há progrmações hoje nesse local</h6>
+        <div *ngFor="let prog of progs">
 
+            <h6 id="horario">{{prog.horaI}}</h6>
+            <div *ngIf=" progs != null && prog.progs.length != 0" id="fT">
+                <div *ngFor="let prog2 of prog.progs">
+                    <div *ngIf="progs != null && prog2.local == filtro || filtro == 'Todos'">
+                    <div (click)="info(prog2)" id="card">
+                            <p id="detalhe" [ngStyle]="{'border-left': '6px solid ' + prog2.cor}">
+                                <strong>{{prog2.titulo}}</strong><br>
+                                {{prog2.tipo}} <br>
+                                {{prog2.horario}}, <strong><a id="local">{{prog2.local}}</a></strong>
+                            </p>
+                            <div id="centro">
+                            <div *ngIf="prog.progs.length > 1" id="divisor"></div>
+                            </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+   </div>
   </div>
   <div *ngIf="progs == null"  id="centro">
       <ion-spinner id="spinner" color="light"  name="ios-small"></ion-spinner><br>

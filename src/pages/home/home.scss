@@ -10,5 +10,14 @@ page-home {
     #fT{
         background-color: rgb(255, 255, 255);
     }
-    
+
+    #homeWeb{
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    #corpo{
+        width: 50%;
+    }
 }

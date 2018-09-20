@@ -36,6 +36,10 @@ export class FirebaseProvider {
   refOnMaratonas(path){
     return firebase.database().ref(path).orderByChild('tipo').equalTo('maratona');
   }
+
+  imagemUpload(){
+    return firebase.storage().ref("palestrante/");  
+  }
   refOff(path){
     return firebase.database().ref(path).off();
   }

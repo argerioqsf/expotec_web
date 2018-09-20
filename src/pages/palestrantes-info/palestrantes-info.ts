@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Platform, ViewController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Platform, ViewController, ActionSheetController } from 'ionic-angular';
 import { BackgroundMode } from '@ionic-native/background-mode';
 import { FirebaseProvider } from '../../providers/firebase/firebase';
 
@@ -25,7 +25,8 @@ export class PalestrantesInfoPage {
               private platform: Platform,
               private viewCtrl: ViewController,
               private backgroundMode: BackgroundMode,
-              private firebaseProvider: FirebaseProvider) {
+              private firebaseProvider: FirebaseProvider,
+              private actionSheetCtrl: ActionSheetController) {
     this.platform.registerBackButtonAction(() => {
       this.viewCtrl.dismiss();
     });
@@ -48,6 +49,46 @@ export class PalestrantesInfoPage {
 
   voltar(){
     this.viewCtrl.dismiss();
+  }
+
+  presentActionSheet() {
+    let actionSheet = this.actionSheetCtrl.create({
+      title: 'Deseja realmente deletar este palestrante?',
+      buttons: [
+        { 
+          text: 'Sim',
+          role: 'destructive',
+          handler: () => {
+            this.deletePalestrante();
+          }
+        },{
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        }
+      ]
+    });
+    actionSheet.present();
+	}
+
+  deletePalestrante(){
+    if(this.palestrante.imagem != "assets/images/newUser-b.png"){
+      this.firebaseProvider.delImage(this.palestrante.imagem).then(()=>{
+        console.log("foto deletada");
+        this.deletePalestrante2();
+      });
+    }else{
+      this.deletePalestrante2();
+    }
+  }
+
+  deletePalestrante2(){
+    this.firebaseProvider.delete("palestrantes/"+this.palestrante.id).then(()=>{
+      console.log("Palestrante deletado");
+      this.voltar();
+    })
   }
 
 }

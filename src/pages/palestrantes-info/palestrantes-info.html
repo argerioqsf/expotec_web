@@ -6,6 +6,9 @@
                     <img id="voltar" src="assets/images/voltar.png" /> 
                 </button>
                 <ion-title text-center><h5 id="titulo" text-center>Detalhes</h5></ion-title>
+                <button id="trash" ion-button (click)="presentActionSheet()" clear item-start icon-only>
+                    <ion-icon color="danger" name="md-trash"></ion-icon> 
+                </button>
             </ion-row>
     </ion-navbar>
   </ion-header>
@@ -21,6 +24,12 @@
       <h6 *ngIf="palestrante != null" id="subtitulo">DESCRIÇÃO</h6>
       <div *ngIf="palestrante != null" padding id="cardInfoDesc">
           <p> {{palestrante.desc}} </p>
+      </div>
+      <h6 *ngIf="palestrante != null" id="subtitulo">CONTATOS</h6>
+      <div *ngIf="palestrante != null" padding id="cardInfoDesc">
+          <p> {{palestrante.telefone}} <br>
+              {{palestrante.email}}
+          </p>
       </div>
       <div *ngIf="palestrante == null"  id="centro">
           <ion-spinner id="spinner" color="light"  name="ios-small"></ion-spinner><br>

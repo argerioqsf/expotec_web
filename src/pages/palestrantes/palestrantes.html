@@ -6,16 +6,14 @@
                     <img id="menu" src="assets/images/menu_b.svg" /> 
                 </button>
                 <ion-title text-center><h5 id="titulo" text-center>Palestrantes</h5></ion-title>
-                <button ion-button (click)="Filtro()" clear item-end icon-only>
-                    <ion-icon [color]="filtro" name="md-funnel"></ion-icon> 
-                </button>
             </ion-row>
     </ion-navbar>
   </ion-header>
   
   <ion-content  id="fundo_app">
     <h6 *ngIf="palestrantes != null && palestrantes.length == 0" id="horario" text-center>Não há Palestrantes</h6>
-      <div *ngIf=" palestrantes != null">
+    <div id="centro">
+      <div id="cardPalestrante" *ngIf=" palestrantes != null">
           <ion-card *ngFor="let palestrante of palestrantes" (click)="info(palestrante)">
               <div id="centro">
                   <img id="logoMaratona" src="{{palestrante.imagem}}"/>
@@ -30,6 +28,7 @@
             </ion-card-content>
           </ion-card>
       </div>
+    </div> 
     <div *ngIf="palestrantes == null"  id="centro">
         <ion-spinner id="spinner" color="light"  name="ios-small"></ion-spinner><br>
     </div>

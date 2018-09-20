@@ -13,15 +13,22 @@
 <ion-content  id="fundo_app" >
   <div class="centroTotal">
     <div id="add">
-      <form [formGroup]="signupForm" (submit)="signupUser()" novalidate>
+      <form [formGroup]="signupForm" novalidate>
         <ion-item id="semCor">
+          <label for="myInput">
             <div id="center">
-                <img (click)="presentActionSheet()" id="fotos" src={{imageURL}} />
+                <img id="fotos" src={{imageURL}} />
             </div>
+            <input #myInput class="visually-hidden" id="myInput" type="file" (change)="atualizaArquivo($event)"/>
+          </label>
         </ion-item>
         <ion-item id="semCor">
           <ion-label id="letraBranca"  stacked>Nome completo</ion-label>
-          <ion-input id="letraBranca" formControlName="nome" type="text" placeholder="Seu primeiro nome"></ion-input>
+          <ion-input id="letraBranca" formControlName="nome" type="text" placeholder="Nome completo"></ion-input>
+        </ion-item>
+        <ion-item id="semCor">
+          <ion-label id="letraBranca"  stacked>Formação</ion-label>
+          <ion-input id="letraBranca" formControlName="formacao" type="text" placeholder="Formação"></ion-input>
         </ion-item>
         <ion-item id="semCor">
             <ion-label id="letraBranca"  stacked>Descrição</ion-label>
@@ -29,7 +36,7 @@
           </ion-item>
         <ion-item id="semCor">
           <ion-label id="letraBranca"  stacked>Telefone para contato</ion-label>
-          <ion-input id="letraBranca" formControlName="telefone" type="number" placeholder="Seu numero de telefone"></ion-input>
+          <ion-input id="letraBranca" formControlName="telefone" type="number" placeholder="Numero de telefone"></ion-input>
         </ion-item>
         <ion-item id="semCor">
           <ion-label id="letraBranca" stacked>Email</ion-label>
@@ -41,9 +48,9 @@
         </ion-item>
       </form>
     </div>
-    <div class="edit" id="centro">
+      <div class="edit" id="centro">
         <ion-fab bottom>
-            <button ion-fab type="submit" color="blueDark" [disabled]="!signupForm.valid"><ion-icon name="md-checkmark"></ion-icon></button>
+            <button ion-fab (click)="addPalestrante()" color="blueDark" [disabled]="!signupForm.valid"><ion-icon name="md-checkmark"></ion-icon></button>
         </ion-fab>
       </div>
   </div>
