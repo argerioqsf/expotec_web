@@ -150,4 +150,19 @@ export class FirebaseProvider {
     return locais;
   }
 
+  getProgs(){
+    let progs = [
+                  {prog:"plestra"},
+                  {prog:"maratona"},
+                  {prog:"entretenimento"},
+                  {prog:"campeonato"},
+                  {prog:"treinamento"},
+                  {prog:"workshop"},
+                  {prog:"avisos"},
+                  {prog:"abertura"},
+                  {prog:"encerramento"},
+                  {prog:"interação"}];
+    return progs;
+  }
+
 }

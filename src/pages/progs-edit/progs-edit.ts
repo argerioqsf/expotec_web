@@ -44,6 +44,7 @@ export class ProgsEditPage {
   id = null;
   imageTest;
   locais;
+  progs;
   @ViewChild('myInput2') myInput: ElementRef;
   constructor(public navCtrl: NavController, 
               public navParams: NavParams,
@@ -58,6 +59,7 @@ export class ProgsEditPage {
               private viewCtrl: ViewController) {
   this.getId();
   this.locais = firebaseProvider.getLocais();
+  this.progs = firebaseProvider.getProgs();
   this.signupForm = formBuilder.group({
     desc: ["",
           Validators.compose([Validators.maxLength(580), Validators.required])

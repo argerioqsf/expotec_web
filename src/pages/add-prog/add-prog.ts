@@ -40,6 +40,7 @@ export class AddProgPage {
   addPalest = false;
   palestrantesPesq = [];
   locais;
+  progs;
   @ViewChild('myInput2') myInput: ElementRef;
   constructor(public navCtrl: NavController, 
               public navParams: NavParams,
@@ -52,6 +53,7 @@ export class AddProgPage {
               private menuCtrl: MenuController,
               private toastCtrl: ToastController) {
   this.locais = firebaseProvider.getLocais();
+  this.progs = firebaseProvider.getProgs();
   this.imageuid = this.generateUUID();
   this.palestrantesOn();
   this.signupForm = formBuilder.group({

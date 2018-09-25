@@ -21,10 +21,7 @@
         <ion-item>
           <ion-label>Tipo de programação:</ion-label>
           <ion-select formControlName="tipo">
-            <ion-option value="palestra">Palestra</ion-option>
-            <ion-option value="maratona">Maratona</ion-option>
-            <ion-option value="entretenimento">Entretenimento</ion-option>
-            <ion-option value="campeonato">Campeonato</ion-option>
+            <ion-option *ngFor="let prog of progs" value="{{prog.prog}}">{{prog.prog}}</ion-option>
           </ion-select>
         </ion-item>
         <ion-item id="semCor" *ngIf="signupForm.value.tipo == 'maratona'">
