@@ -52,7 +52,7 @@ export class PalestrantesPage {
 
   info(palestrante){
     console.log("palestrante: ",palestrante);
-    let modal = this.modalCtrl.create("page-palestrantes-info",{palestrante:palestrante});
+    let modal = this.modalCtrl.create("page-palestrantes-info",{id:palestrante.id});
     modal.onDidDismiss(data => {
       this.platform.registerBackButtonAction(() => {
         if(!this.viewCtrl.enableBack()) { 

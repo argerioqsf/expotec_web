@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Platform, ViewController, ActionSheetController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Platform, ViewController, ActionSheetController, ModalController, AlertController, LoadingController } from 'ionic-angular';
 import { BackgroundMode } from '@ionic-native/background-mode';
 import { FirebaseProvider } from '../../providers/firebase/firebase';
 
@@ -20,35 +20,51 @@ import { FirebaseProvider } from '../../providers/firebase/firebase';
 export class PalestrantesInfoPage {
 
   palestrante:any = null;
+  id = null;
   constructor(public navCtrl: NavController, 
               public navParams: NavParams,
               private platform: Platform,
               private viewCtrl: ViewController,
               private backgroundMode: BackgroundMode,
               private firebaseProvider: FirebaseProvider,
-              private actionSheetCtrl: ActionSheetController) {
+              private actionSheetCtrl: ActionSheetController,
+              private modalCtrl: ModalController,
+              private alertCtrl: AlertController,
+              private loadingCtrl: LoadingController) {
     this.platform.registerBackButtonAction(() => {
       this.viewCtrl.dismiss();
     });
-    this.palestrante = this.navParams.get("palestrante");
-    this.progOn();
     console.log("palestrante: ", this.palestrante);
+    this.getId();
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad ProgsInfoPage');
   }
 
+  getId(){
+    this.id = this.navParams.get("id");
+    this.progOn();
+  }
+
   progOn(){
-    this.firebaseProvider.refOn("palestrantes/"+this.palestrante.id).on("value",(prog:any)=>{
-      console.log("palestranteOn: ",prog.val());
-      this.palestrante = prog.val();
-      console.log("palestrante: ",this.palestrante);
-    });
+    if(this.id != null){
+      this.firebaseProvider.refOn("palestrantes/"+this.id).on("value",(prog:any)=>{
+        console.log("palestranteOn: ",prog.val());
+        this.palestrante = prog.val();
+        console.log("palestrante: ",this.palestrante);
+      });
+    }else{
+      this.getId();
+    }
   }
 
   voltar(){
     this.viewCtrl.dismiss();
+  }
+
+  ionViewDidLeave(){
+    this.firebaseProvider.refOff("palestrantes/"+this.palestrante.id);
   }
 
   presentActionSheet() {
@@ -71,24 +87,71 @@ export class PalestrantesInfoPage {
       ]
     });
     actionSheet.present();
-	}
+  }
+  
+  palestranteEdit(){
+    console.log("palestranteEdit: ",this.palestrante);
+    let modal = this.modalCtrl.create("palestrantes-edit",{id:this.palestrante.id});
+    modal.onDidDismiss(data => {
+      this.platform.registerBackButtonAction(() => {
+        this.viewCtrl.dismiss();
+      });
+    });
+    modal.present();
+  }
 
   deletePalestrante(){
+    let loading = this.loadingCtrl.create({
+      spinner: 'ios',
+      duration: 30000
+    });
+    loading.present();
+    let ok = false;
     if(this.palestrante.imagem != "assets/images/newUser-b.png"){
       this.firebaseProvider.delImage(this.palestrante.imagem).then(()=>{
         console.log("foto deletada");
-        this.deletePalestrante2();
+        this.deletePalestrante2().then(result=>{
+          if (result == "OK") {
+            this.voltar();
+            ok = true;
+            loading.dismiss();
+          }
+        });
       });
     }else{
-      this.deletePalestrante2();
+      this.deletePalestrante2().then(result=>{
+        if (result == "OK") {
+          this.voltar();
+          ok = true;
+          loading.dismiss();
+        }
+      });
     }
+    loading.onDidDismiss(() => {
+      console.log('Ok : ',ok);
+      if(ok == false){
+        let alert = this.alertCtrl.create({
+          title:"Houve um erro na comunicação com o servidor",
+          subTitle:"verifique sua internet",
+        });
+        alert.present();
+      }
+      if(ok == true){
+        let alert = this.alertCtrl.create({
+          title:"Programação exluuida com sucesso!"
+        });
+        alert.present();
+        }
+      });
   }
 
   deletePalestrante2(){
-    this.firebaseProvider.delete("palestrantes/"+this.palestrante.id).then(()=>{
-      console.log("Palestrante deletado");
-      this.voltar();
-    })
+    return new Promise((resolve,reject)=>{
+      this.firebaseProvider.delete("palestrantes/"+this.palestrante.id).then(()=>{
+        console.log("Palestrante deletado");
+        resolve("OK");
+      });
+   });
   }
 
 }

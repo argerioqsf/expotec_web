@@ -1,33 +1,32 @@
-
 <ion-header >
   <ion-navbar color="navbar">
           <ion-row>
               <button ion-button (click)="sideMenu()" clear item-start icon-only>
                   <img id="menu" src="assets/images/menu_b.svg" /> 
               </button>
-              <ion-title text-center><h5 id="titulo" text-center>Adicionar Programação</h5></ion-title>
+              <ion-title text-center><h5 id="titulo" text-center>Editar programação</h5></ion-title>
           </ion-row>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding id="fundo_app">
   <div id="centro" *ngIf="!addPalest">
-    <div id="add">
+    <div *ngIf="prog != null" id="add">
       <form [formGroup]="signupForm" novalidate>
-        <ion-item id="semCor">
-            <ion-label id="letraBranca"  stacked>Titulo:</ion-label>
-            <ion-input id="letraBranca" formControlName="titulo" type="text" placeholder="Titulo"></ion-input>
+        <ion-item>
+            <ion-label  stacked>Titulo:</ion-label>
+            <ion-input  [ngModel]="prog.titulo" formControlName="titulo" type="text" placeholder="Titulo"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label>Tipo de programação:</ion-label>
-          <ion-select formControlName="tipo">
+          <ion-select [(ngModel)]="prog.tipo" formControlName="tipo">
             <ion-option value="palestra">Palestra</ion-option>
             <ion-option value="maratona">Maratona</ion-option>
             <ion-option value="entretenimento">Entretenimento</ion-option>
             <ion-option value="campeonato">Campeonato</ion-option>
           </ion-select>
         </ion-item>
-        <ion-item id="semCor" *ngIf="signupForm.value.tipo == 'maratona'">
+        <ion-item *ngIf="signupForm.value.tipo == 'maratona'">
           <label for="myInput" >
             <div  id="center">
                 <img padding id="fotos" src={{imageURL}} />
@@ -35,30 +34,32 @@
             <input #myInput class="visually-hidden" id="myInput" type="file" (change)="atualizaArquivo($event)"/>
           </label>
         </ion-item>
+
         <ion-item>
           <ion-label>Local:</ion-label>
-          <ion-select formControlName="local">
+          <ion-select [(ngModel)]="prog.local" placeholder="{{prog.local}}" formControlName="local">
             <ion-option *ngFor="let local of locais" value="{{local.local}}">{{local.local}}</ion-option>
           </ion-select>
         </ion-item>
+
         <ion-item>
             <ion-label>Dia:</ion-label>
-            <ion-datetime formControlName="dia" placeholder="DD-MM-YYYY" displayFormat="DD-MM-YYYY" pickerFormat="DD-MM-YYYY" min="2018" min="2018" doneText="ok" cancelText="cancelar">
+            <ion-datetime [(ngModel)]="prog.dia" formControlName="dia" placeholder="{{prog.dia}}" displayFormat="DD-MM-YYYY" min="2018" min="2018" doneText="ok" cancelText="cancelar">
             </ion-datetime>
         </ion-item>
         <ion-item>
             <ion-label>Hora inico:</ion-label>
-            <ion-datetime formControlName="horaI" placeholder="HH:mm" displayFormat="HH:mm" pickerFormat="HH:mm" doneText="ok" cancelText="cancelar">
+            <ion-datetime [(ngModel)]="prog.horaI" formControlName="horaI" placeholder="{{prog.horaI}}" displayFormat="HH:mm" pickerFormat="HH:mm" doneText="ok" cancelText="cancelar">
             </ion-datetime>
         </ion-item>
         <ion-item>
             <ion-label>Hora Final:</ion-label>
-            <ion-datetime  formControlName="horaF" placeholder="HH:mm" displayFormat="HH:mm" pickerFormat="HH:mm" [min]="signupForm.value.horaI"  doneText="ok" cancelText="cancelar">
+            <ion-datetime  [(ngModel)]="prog.horaF" formControlName="horaF" placeholder="HH:mm" displayFormat="HH:mm" pickerFormat="HH:mm" [min]="signupForm.value.horaI"  doneText="ok" cancelText="cancelar">
             </ion-datetime>
         </ion-item>
         <div id="corpoRow">
             <ion-label id="label">Descrição:</ion-label>
-            <textarea #myInput2 formControlName="desc" id="myInput2" rows="7" maxLength="580" (keyup)="resize()"></textarea>
+            <textarea #myInput2 [ngModel]="prog.desc" formControlName="desc" id="myInput2" rows="7" maxLength="580" (keyup)="resize()"></textarea>
             <p id="contador"><strong>{{signupForm.value.desc.length}}/580</strong></p>
         </div>
         <ion-item-divider no-lines text-center color="blueDark">Palestrantes</ion-item-divider>

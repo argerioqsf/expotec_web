@@ -16,32 +16,36 @@
 <ion-content  id="fundo_app">
   <h6 *ngIf="progs != null && progs.length == 0 && filtro == 'Todos'" id="horario" text-center>Não há programações</h6>
   <h6 *ngIf="progs != null && progs.length == 0 && filtro != 'Todos'" id="horario" text-center>Não há progrmações hoje nesse local</h6>
-  <div *ngFor="let prog of progs">
-    <h6 id="horario">{{prog.horaI}}</h6>
-    <ion-card *ngFor="let prog2 of prog.progs" (click)="info(prog2)">
-        <div id="centro">
-            <img id="logoMaratona" src="{{prog2.imagem}}"/>
-        </div>
-      <ion-card-content>
-        <ion-card-title text-center>
-          {{prog2.titulo}}
-          </ion-card-title>
-        <ion-row no-padding [ngStyle]="{'border-left': '6px solid ' + prog2.cor}">
-          <ion-col id="centro">
-            <button ion-button clear small color="dark" icon-start>
-              <ion-icon name='md-time'></ion-icon>
-              {{prog2.dia}}, {{prog2.horario}}
-            </button>
-          </ion-col>
-          <ion-col id="centro">
-            <button ion-button clear small [ngStyle]="{'color': '' + prog2.cor}" icon-start>
-              <ion-icon name='md-map'></ion-icon>
-              {{prog2.local}}
-            </button>
-          </ion-col>
-        </ion-row>
-      </ion-card-content>
-    </ion-card>
+  <div id="centro">
+    <div>
+      <div *ngFor="let prog of progs">
+        <h6 id="horario">{{prog.horaI}}</h6>
+        <ion-card *ngFor="let prog2 of prog.progs" (click)="info(prog2)">
+            <div id="centro">
+                <img id="logoMaratona" src="{{prog2.imagem}}"/>
+            </div>
+          <ion-card-content>
+            <ion-card-title text-center>
+              {{prog2.titulo}}
+              </ion-card-title>
+            <ion-row no-padding [ngStyle]="{'border-left': '6px solid ' + prog2.cor}">
+              <ion-col id="centro">
+                <button ion-button clear small color="dark" icon-start>
+                  <ion-icon name='md-time'></ion-icon>
+                  {{prog2.dia}}, {{prog2.horario}}
+                </button>
+              </ion-col>
+              <ion-col id="centro">
+                <button ion-button clear small [ngStyle]="{'color': '' + prog2.cor}" icon-start>
+                  <ion-icon name='md-map'></ion-icon>
+                  {{prog2.local}}
+                </button>
+              </ion-col>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
   </div>
   <div *ngIf="progs == null"  id="centro">
       <ion-spinner id="spinner" color="light"  name="ios-small"></ion-spinner><br>

@@ -22,6 +22,7 @@ export class ProgsMaratonasPage {
   progs = null;
   filtro = "Todos";
   progSnap = [];
+  locais;
   constructor(public navCtrl: NavController,
               private firebaseProvider: FirebaseProvider,
               private menuCtrl: MenuController,
@@ -31,6 +32,7 @@ export class ProgsMaratonasPage {
               private platform: Platform,
               private backgroundMode: BackgroundMode) {
               this.progOn();
+              this.locais = firebaseProvider.getLocais();
               this.platform.registerBackButtonAction(() => {
                 if(!this.viewCtrl.enableBack()) { 
                   this.backgroundMode.moveToBackground();
@@ -48,26 +50,14 @@ export class ProgsMaratonasPage {
     let alert = this.alertCtrl.create();
     alert.setTitle('Filtro');
 
-    alert.addInput({
-      type: 'radio',
-      label: 'Todos',
-      value: 'Todos',
-      checked: (this.filtro == "Todos")
-    });
-
-    alert.addInput({
-      type: 'radio',
-      label: 'Maloca',
-      value: 'maloca',
-      checked: (this.filtro == "maloca")
-    });
-
-    alert.addInput({
-      type: 'radio',
-      label: 'Auditório',
-      value: 'auditório',
-      checked: (this.filtro == "auditório")
-    });
+    for (let i = 0; i < this.locais.length; i++) {
+      alert.addInput({
+        type: 'radio',
+        label: this.locais[i].local,
+        value: this.locais[i].local,
+        checked: (this.filtro == this.locais[i].local)
+      });
+    }
 
     alert.addButton('Cancel');
     alert.addButton({
@@ -83,13 +73,18 @@ export class ProgsMaratonasPage {
   progOn(){
       this.firebaseProvider.refOn("prog/").orderByChild('tipo').equalTo('maratona').on("value",(progSnap:any)=>{
         console.log("progs0: ",progSnap.val());
-        this.progSnap = progSnap;
-        this.ProgOrder();
+        if(progSnap.val()){
+          this.progSnap = progSnap;
+          this.ProgOrder();
+        }else{
+          console.log("progs0 vazio.");
+          this.progs = [];
+        } 
       });
   }
 
   info(prog){
-    let modal = this.modalCtrl.create("page-info",{prog:prog});
+    let modal = this.modalCtrl.create("page-info",{id:prog.id});
     modal.onDidDismiss(data => {
       this.platform.registerBackButtonAction(() => {
         if(!this.viewCtrl.enableBack()) { 
@@ -112,11 +107,11 @@ export class ProgsMaratonasPage {
                 for (let j = 0; j < progs2.length; j++) {
                   console.log("progs[j].horaI , horaI[0]: ",progs2[j].horaI ," / ", horaI[0]);
                   if(progs2[j].horaI == horaI[0]){
-                    if(progs[i].local == "auditório"){
-                      progs[i].cor = "red";
-                    }
-                    if(progs[i].local == "maloca"){
-                      progs[i].cor = "blue";
+                    for (let k = 0; k < this.locais.length; k++) {
+                      if(progs[i].local == this.locais[k].local){
+                        progs[i].cor = this.locais[k].cor;
+                        break;
+                      }
                     }
                     if (progs[i].local == this.filtro || this.filtro == "Todos") {
                       progs2[j].progs.push(progs[i]);
@@ -126,11 +121,11 @@ export class ProgsMaratonasPage {
                   }
                   if(j == progs2.length - 1){
                     let progsT:any = [];
-                    if(progs[i].local == "auditório"){
-                      progs[i].cor = "red";
-                    }
-                    if(progs[i].local == "maloca"){
-                      progs[i].cor = "blue";
+                    for (let k = 0; k < this.locais.length; k++) {
+                      if(progs[i].local == this.locais[k].local){
+                        progs[i].cor = this.locais[k].cor;
+                        break;
+                      }
                     }
                     if (progs[i].local == this.filtro || this.filtro == "Todos") {
                       progsT.push(progs[i]);
@@ -142,11 +137,11 @@ export class ProgsMaratonasPage {
                 }
               }else{
                 let progsT:any = [];
-                if(progs[i].local == "auditório"){
-                  progs[i].cor = "red";
-                }
-                if(progs[i].local == "maloca"){
-                  progs[i].cor = "blue";
+                for (let k = 0; k < this.locais.length; k++) {
+                  if(progs[i].local == this.locais[k].local){
+                    progs[i].cor = this.locais[k].cor;
+                    break;
+                  }
                 }
                 if (progs[i].local == this.filtro || this.filtro == "Todos") {
                   progsT.push(progs[i]);

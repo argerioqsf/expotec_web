@@ -1,24 +1,25 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, Loading, LoadingController, ActionSheetController, MenuController, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, Loading, LoadingController, ActionSheetController, MenuController, ToastController, ViewController } from 'ionic-angular';
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { FirebaseProvider } from '../../providers/firebase/firebase';
 import { EmailValidator } from "../../validators/email";
 /**
- * Generated class for the AddProgPage page.
+ * Generated class for the ProgsEditPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
  */
 
 @IonicPage({
-  name:'page-add-prog'
+  name:'progs-edit'
 })
 @Component({
-  selector: 'page-add-prog',
-  templateUrl: 'add-prog.html',
+  selector: 'page-progs-edit',
+  templateUrl: 'progs-edit.html',
 })
-export class AddProgPage {
+export class ProgsEditPage {
+
   public imageURL:any = "assets/images/circulo.png";
   public signupForm: FormGroup;
   cont = false;
@@ -30,6 +31,7 @@ export class AddProgPage {
   public myPhotoURL: any;
   public loading: Loading;
   public loading2: Loading;
+  prog = null;
   tipo;
   cargos:any = [];
   setores:any = [];
@@ -39,6 +41,8 @@ export class AddProgPage {
   palestrantesPerfil:any = [];
   addPalest = false;
   palestrantesPesq = [];
+  id = null;
+  imageTest;
   locais;
   @ViewChild('myInput2') myInput: ElementRef;
   constructor(public navCtrl: NavController, 
@@ -50,10 +54,10 @@ export class AddProgPage {
               private actionSheetCtrl: ActionSheetController,
               private camera: Camera,
               private menuCtrl: MenuController,
-              private toastCtrl: ToastController) {
+              private toastCtrl: ToastController,
+              private viewCtrl: ViewController) {
+  this.getId();
   this.locais = firebaseProvider.getLocais();
-  this.imageuid = this.generateUUID();
-  this.palestrantesOn();
   this.signupForm = formBuilder.group({
     desc: ["",
           Validators.compose([Validators.maxLength(580), Validators.required])
@@ -83,6 +87,11 @@ export class AddProgPage {
     this.myInput.nativeElement.style.height = this.myInput.nativeElement.scrollHeight + 'px';
   }
 
+  getId(){
+    this.id = this.navParams.get("id");
+    this.progOn();
+  }
+
   palestrantesOn(){
     console.log("palestrantesOn:");
       console.log("palestrantes: ",this.palestrantes);
@@ -90,6 +99,41 @@ export class AddProgPage {
           console.log("palestrantes: ",palestrantes);
           this.palestrantesPerfil = palestrantes;
         });
+  }
+
+  progOn(){
+    if (this.id != null) {
+      this.firebaseProvider.refOn("prog/"+this.id).on("value",prog=>{
+        console.log("progon: ",prog.val());
+        this.prog = prog.val();
+        if(prog.val().palestrantes){
+          console.log("palestrantes: ",prog.val().palestrantes);
+          for (let i = 0; i < this.prog.palestrantes.length; i++) {
+            this.firebaseProvider.refOn("palestrantes/"+this.prog.palestrantes[i]).once("value",palest=>{
+              if(palest.val()){
+                this.palestrantes.push(palest.val());
+              }
+            });
+          }
+          this.palestrantes2 = this.prog.palestrantes;
+        }
+        let horas =  prog.val().horario.split("-");
+        let horaI = horas[0];
+        let horaF = horas[1];
+        this.prog.horaI = horaI;
+        this.prog.horaF = horaF;
+        let dia = this.prog.dia.split("-");
+        this.prog.dia = dia[2]+"-"+dia[1]+"-"+dia[0];
+        if(prog.val().imagem != undefined){this.imageURL = prog.val().imagem;}
+        if(prog.val().imagemUid != undefined){this.imageuid = prog.val().imagemUid;}else{
+          this.imageuid = this.generateUUID();
+          this.imageTest = this.imageURL;
+        }
+        this.palestrantesOn();
+      });
+    }else{
+      this.getId();
+    }
   }
 
   atualizaArquivo(event){
@@ -168,6 +212,12 @@ export class AddProgPage {
 
   enviarArquivo(){
     if(this.arquivo != null){
+      let loading = this.loadingCtrl.create({
+        spinner: 'ios',
+        duration: 30000
+      });
+      loading.present();
+      let ok = false;
       let metadata = {
         contentType: this.arquivo.type
       };
@@ -178,25 +228,39 @@ export class AddProgPage {
         progress = parseInt(progress);
         console.log('Upload is ' + progress + '% done');
       }, error => {
+        loading.dismiss();
         console.log("Erro imagemupload");
 			},()=>{
         upload.snapshot.ref.getDownloadURL().then((downloadURL)=>{
           console.log('File available at', downloadURL);
           this.imageURL = downloadURL;
+          ok = true;
+          loading.dismiss();
         console.log("OK imagemupload");
         });
       });
 
+      loading.onDidDismiss(() => {
+        console.log('Ok : ',ok);
+        if(ok == false){
+          let alert = this.alertCtrl.create({
+            title:"Houve um erro na comunicação com o servidor",
+            subTitle:"verifique sua internet",
+          });
+          alert.present();
+        }
+        if(ok == true){
+          let alert = this.alertCtrl.create({
+            title:"Imagem adicionada com sucesso!"
+          });
+          alert.present();
+          }
+        });
     }
   }
 
   ionViewDidLeave(){
-		if( this.imageURL != "assets/images/circulo.png" && this.cont == false ){
-			 console.log("deletar foto de perfil que não será usada");
-			this.firebaseProvider.delImage(this.imageURL).then(()=>{
-        console.log("foto deletada");
-      });
-      }
+    this.firebaseProvider.refOff("palestrantes/"+this.id);
   }
 
   ionViewDidLoad() {
@@ -217,7 +281,6 @@ export class AddProgPage {
     }
     return vlr;
   }
-
 
   addProg(){
     console.log("singupForm: ",this.signupForm.value);
@@ -247,14 +310,15 @@ export class AddProgPage {
         this.signupForm.value.imagemUid = this.imageuid;
       }
     console.log("singupForm: ",this.signupForm.value);
+    console.log("prog: ",this.prog);
     let id = this.generateUUID();
-    this.signupForm.value.id = id;
+    this.signupForm.value.id = this.prog.id;
     console.log("signupForm.value: ",this.signupForm.value); 
-      this.firebaseProvider.set("prog/"+this.signupForm.value.id,this.signupForm.value).then(()=>{
+      this.firebaseProvider.update("prog/"+this.signupForm.value.id,this.signupForm.value).then(()=>{
         console.log("this.signupForm.value: ",this.signupForm.value);
         ok = true;
         this.cont = true;
-        this.navCtrl.setRoot("page-progs-geral");
+        this.voltar();
         loading.dismiss();
       },error=>{
         loading.dismiss();
@@ -275,11 +339,12 @@ export class AddProgPage {
       }
       if(ok == true){
         let alert = this.alertCtrl.create({
-          title:"Programação cadastrado com sucesso!"
+          title:"Programação editada com sucesso!"
         });
         alert.present();
         }
       });
+      
     }else{
       if(this.signupForm.value.tipo == "maratona" && this.imageURL == "assets/images/circulo.png"){
         let alert = this.alertCtrl.create({
@@ -301,6 +366,10 @@ export class AddProgPage {
       }
     }
   }
+  
+  voltar(){
+    this.viewCtrl.dismiss();
+  }
 
   private generateUUID(): any {
     var d = new Date().getTime();
@@ -311,5 +380,4 @@ export class AddProgPage {
     });
     return uuid;
   }
-
 }

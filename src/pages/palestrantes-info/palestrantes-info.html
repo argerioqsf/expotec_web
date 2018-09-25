@@ -6,6 +6,9 @@
                     <img id="voltar" src="assets/images/voltar.png" /> 
                 </button>
                 <ion-title text-center><h5 id="titulo" text-center>Detalhes</h5></ion-title>
+                <button id="trash" ion-button (click)="palestranteEdit()" clear item-start icon-only>
+                    <ion-icon color="light" name="md-create"></ion-icon> 
+                </button>
                 <button id="trash" ion-button (click)="presentActionSheet()" clear item-start icon-only>
                     <ion-icon color="danger" name="md-trash"></ion-icon> 
                 </button>

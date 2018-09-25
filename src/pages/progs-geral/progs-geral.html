@@ -14,12 +14,12 @@
 </ion-header>
 
 <ion-content  id="fundo_app">
-    <div id="homeWeb">
-      <div id="corpo">
         <h6 *ngIf="progs != null && progs.length == 0 && filtro == 'Todos'" id="horario" text-center>Não há programações</h6>
         <h6 *ngIf="progs != null && progs.length == 0 && filtro != 'Todos'" id="horario" text-center>Não há progrmações hoje nesse local</h6>
+    
+    <div id="homeWeb">
+      <div >
         <div *ngFor="let prog of progs">
-
             <h6 id="horario">{{prog.horaI}}</h6>
             <div *ngIf=" progs != null && prog.progs.length != 0" id="fT">
                 <div *ngFor="let prog2 of prog.progs">

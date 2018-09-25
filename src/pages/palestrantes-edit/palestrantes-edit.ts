@@ -1,24 +1,25 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, Loading, LoadingController, ActionSheetController, MenuController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, Loading, LoadingController, ActionSheetController, MenuController, ViewController } from 'ionic-angular';
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { FirebaseProvider } from '../../providers/firebase/firebase';
 import { EmailValidator } from "../../validators/email";
 /**
- * Generated class for the AddPalestrantePage page.
+ * Generated class for the PalestrantesEditPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
  */
 
 @IonicPage({
-  name:'page-add-palestrante'
+  name:'palestrantes-edit'
 })
 @Component({
-  selector: 'page-add-palestrante',
-  templateUrl: 'add-palestrante.html',
+  selector: 'page-palestrantes-edit',
+  templateUrl: 'palestrantes-edit.html',
 })
-export class AddPalestrantePage {
+export class PalestrantesEditPage {
+
   public imageURL:any = "assets/images/newUser-b.png";
   public signupForm: FormGroup;
   cont = false;
@@ -33,6 +34,8 @@ export class AddPalestrantePage {
   cargos:any = [];
   setores:any = [];
   arquivo:any = null;
+  palestrante:any = null;
+  id;
   constructor(public navCtrl: NavController, 
               public navParams: NavParams,
               formBuilder: FormBuilder,
@@ -41,8 +44,8 @@ export class AddPalestrantePage {
               private loadingCtrl: LoadingController,
               private actionSheetCtrl: ActionSheetController,
               private camera: Camera,
-              private menuCtrl: MenuController) {
-  this.imageuid = this.generateUUID();
+              private menuCtrl: MenuController,
+              private viewCtrl: ViewController) {
   this.signupForm = formBuilder.group({
     email: ["",
         Validators.compose([Validators.required, EmailValidator.isValid])
@@ -60,6 +63,7 @@ export class AddPalestrantePage {
         Validators.compose([Validators.minLength(1), Validators.required])
       ]	 
   });
+  this.getId();
   }
 
   ionViewDidLoad() {
@@ -72,6 +76,24 @@ export class AddPalestrantePage {
       console.log("event.srcElement: ",event.srcElement.webkitRelativePath);
       this.enviarArquivo();
       
+  }
+
+  getId(){
+    this.id = this.navParams.get("id");
+    this.palestranteOn();
+  }
+
+  palestranteOn(){
+    if (this.id != null) {
+      this.firebaseProvider.refOn("palestrantes/"+this.id).on("value",palestrante=>{
+        console.log("palestrante: ",palestrante.val());
+        this.palestrante = palestrante.val();
+        this.imageURL = palestrante.val().imagem;
+        this.imageuid = palestrante.val().imagemUid;
+      });
+    }else{
+      this.getId();
+    }
   }
 
   enviarArquivo(){
@@ -91,8 +113,6 @@ export class AddPalestrantePage {
         let progress:any = (savedPicture.bytesTransferred / savedPicture.totalBytes) * 100;
         progress = parseInt(progress);
         console.log('Upload is ' + progress + '% done');
-        if (progress == 100) {
-        }
       }, error => {
         loading.dismiss();
         console.log("Erro imagemupload");
@@ -105,6 +125,7 @@ export class AddPalestrantePage {
         console.log("OK imagemupload");
         });
       });
+      
       loading.onDidDismiss(() => {
         console.log('Ok : ',ok);
         if(ok == false){
@@ -139,12 +160,7 @@ export class AddPalestrantePage {
   }
   
   ionViewDidLeave(){
-		if( this.imageURL != "assets/images/newUser-b.png" && this.cont == false ){
-			 console.log("deletar foto de perfil que não será usada");
-			this.firebaseProvider.delImage(this.imageURL).then(()=>{
-        console.log("foto deletada");
-      });
-      }
+    this.firebaseProvider.refOff("palestrantes/"+this.id);
   }
   
   addPalestrante(){
@@ -158,14 +174,14 @@ export class AddPalestrantePage {
       this.signupForm.value.imagem = this.imageURL;
       this.signupForm.value.imagemUid = this.imageuid;
     console.log("singupForm: ",this.signupForm.value);
-    let id = this.generateUUID();
+    let id = this.palestrante.id;
     this.signupForm.value.id = id;
     console.log("signupForm.value: ",this.signupForm.value); 
-      this.firebaseProvider.set("palestrantes/"+this.signupForm.value.id,this.signupForm.value).then(()=>{
+      this.firebaseProvider.update("palestrantes/"+this.signupForm.value.id,this.signupForm.value).then(()=>{
         console.log("this.signupForm.value: ",this.signupForm.value);
         ok = true;
         this.cont = true;
-        this.navCtrl.setRoot("palestrantes");
+        this.voltar();
         loading.dismiss();
       },error=>{
         loading.dismiss();
@@ -186,7 +202,7 @@ export class AddPalestrantePage {
       }
       if(ok == true){
         let alert = this.alertCtrl.create({
-          title:"Palestrante cadastrado com sucesso!"
+          title:"Palestrante atualizado com sucesso!"
         });
         alert.present();
         }
@@ -199,97 +215,7 @@ export class AddPalestrantePage {
     }
   }
 
-  /*
-  presentActionSheet() {
-    let actionSheet = this.actionSheetCtrl.create({
-      title: 'Adicionar foto',
-      buttons: [
-        { 
-          icon:'md-image',
-          text: 'Galeria',
-          role: 'destructive',
-          handler: () => {
-           this.selectPhoto();
-          }
-        },{
-          icon:'md-camera',
-          text: 'Camera',
-          handler: () => {
-           this.takePhoto();
-          }
-        },{
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => {
-            console.log('Cancel clicked');
-          }
-        }
-      ]
-    });
-    actionSheet.present();
-	}
-  
-  takePhoto() {
-    this.camera.getPicture({
-      quality: 50,
-      destinationType: this.camera.DestinationType.DATA_URL,
-      sourceType: this.camera.PictureSourceType.CAMERA,
-      encodingType: this.camera.EncodingType.JPEG,
-      saveToPhotoAlbum: true,
-      targetWidth: 300,
-      targetHeight: 300
-    }).then(imageData => {
-      this.myPhoto = imageData;
-      this.fotooff = imageData;
-      this.loading2 = this.loadingCtrl.create();
-      this.loading2.present();
-      this.uploadPhoto();
-    }, error => {
-      //alert("ERROR -> " + JSON.stringify(error));
-    });
+  voltar(){
+    this.viewCtrl.dismiss();
   }
-
-  selectPhoto(): void {
-
-    this.camera.getPicture({
-
-      sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
-      destinationType: this.camera.DestinationType.DATA_URL,
-      quality: 50,
-      encodingType: this.camera.EncodingType.JPEG,
-      targetWidth: 300,
-			targetHeight: 300
-			
-    }).then(imageData => {
-
-			this.myPhoto = imageData;
-			this.fotooff = imageData;
-      this.loading2 = this.loadingCtrl.create();
-      this.loading2.present();
-      this.uploadPhoto();
-			
-    }, error => {
-
-		 //alert("ERROR -> " + JSON.stringify(error));
-		 
-    });
-  }
-
-  public uploadPhoto(): void { 
-		this.firebaseProvider.uploadFotoPerfil(this.imageuid,this.myPhoto).then((resp:any)=>{
-      if(resp.status == "OK"){
-        console.log('File available at', resp.body);
-        this.imageURL = resp.body;
-        this.loading2.dismiss();
-      }else{
-        this.loading2.dismiss();
-        let alert = this.alertCtrl.create({
-          title:"Erro no carregamento da imagem",
-          subTitle:"Tente novamente"
-        });
-        alert.present();
-      }
-    });
-  }*/
-
 }

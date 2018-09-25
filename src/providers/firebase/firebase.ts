@@ -37,8 +37,8 @@ export class FirebaseProvider {
     return firebase.database().ref(path).orderByChild('tipo').equalTo('maratona');
   }
 
-  imagemUpload(){
-    return firebase.storage().ref("palestrante/");  
+  imagemUpload(path){
+    return firebase.storage().ref(path);  
   }
   refOff(path){
     return firebase.database().ref(path).off();
@@ -136,6 +136,18 @@ export class FirebaseProvider {
   delImage(image):Promise<any>{
 		return firebase.storage().refFromURL(image).delete().then(function() {
 		}).catch(function(error){});
-	}
+  }
+  
+  getLocais(){
+    let locais = [
+                  {local:"Todos",cor:"#f4f4f4"},
+                  {local:"Maloca",cor:"blue"},
+                  {local:"Auditório",cor:"red"},
+                  {local:"Campo de futebol",cor:"rgb(184, 74, 31)"},
+                  {local:"Quadra1",cor:"rgb(198, 209, 36)"},
+                  {local:"Quadra2",cor:"rgb(75, 40, 26)"},
+                  {local:"Planetário",cor:"rgb(18, 201, 207)"}];
+    return locais;
+  }
 
 }

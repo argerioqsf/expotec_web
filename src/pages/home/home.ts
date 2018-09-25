@@ -13,6 +13,8 @@ export class HomePage {
   progs = null;
   filtro = "Todos";
   progSnap = [];
+  locais;
+  cont = 1;
   constructor(public navCtrl: NavController,
               private firebaseProvider: FirebaseProvider,
               private menuCtrl: MenuController,
@@ -23,6 +25,7 @@ export class HomePage {
               private backgroundMode: BackgroundMode,
               private splashScreen: SplashScreen) {
                 this.splashScreen.hide();
+                this.locais = firebaseProvider.getLocais();
               this.progOn().then(resolve=>{
                 this.ProgOrder(true);
               });
@@ -43,26 +46,15 @@ export class HomePage {
     let alert = this.alertCtrl.create();
     alert.setTitle('Filtro');
 
-    alert.addInput({
-      type: 'radio',
-      label: 'Todos',
-      value: 'Todos',
-      checked: (this.filtro == "Todos")
-    });
-
-    alert.addInput({
-      type: 'radio',
-      label: 'Maloca',
-      value: 'maloca',
-      checked: (this.filtro == "maloca")
-    });
-
-    alert.addInput({
-      type: 'radio',
-      label: 'Auditório',
-      value: 'auditório',
-      checked: (this.filtro == "auditório")
-    });
+    for (let i = 0; i < this.locais.length; i++) {
+      console.log("local/cor:",this.locais[i].local,"/",this.locais[i].cor);
+      alert.addInput({
+        type: 'radio',
+        label: this.locais[i].local,
+        value: this.Trim(this.locais[i].local),
+        checked: (this.filtro == this.locais[i].local)
+      });
+    }
 
     alert.addButton('Cancel');
     alert.addButton({
@@ -74,21 +66,35 @@ export class HomePage {
     });
     alert.present();
   }
+  
+  Trim(vlr) {
+    while(vlr.indexOf(" ") != -1){
+      vlr = vlr.replace(" ", "");
+    }
+    return vlr;
+  }
 
   progOn(){
     return new Promise((resolve,reject)=>{
       this.firebaseProvider.refOn("prog/").orderByChild('fila').on("value",(progSnap:any)=>{
         console.log("progs0: ",progSnap.val());
-        this.progSnap = progSnap;
-        this.ProgOrder(false);
-        resolve("OK");
+        if(progSnap.val()){
+          this.progSnap = progSnap;
+          this.ProgOrder(false);
+          resolve("OK");
+        }else{
+          console.log("progs0 vazio.");
+          this.progs = [];
+        }
       });
     });
   }
 
   info(prog){
-    let modal = this.modalCtrl.create("page-info",{prog:prog});
+    let modal = this.modalCtrl.create("page-info",{id:prog.id});
+    this.cont = 0;
     modal.onDidDismiss(data => {
+      this.cont = 1;
       this.platform.registerBackButtonAction(() => {
         if(!this.viewCtrl.enableBack()) { 
           this.backgroundMode.moveToBackground();
@@ -127,26 +133,26 @@ export class HomePage {
                 for (let j = 0; j < progs2.length; j++) {
                   console.log("progs[j].horaI , horaI[0]: ",progs2[j].horaI ," / ", horaI[0]);
                   if(progs2[j].horaI == horaI[0]){
-                    if(progs[i].local == "auditório"){
-                      progs[i].cor = "red";
+                    
+                    for (let k = 0; k < this.locais.length; k++) {
+                    if(progs[i].local == this.Trim(this.locais[k].local)){
+                      progs[i].cor = this.locais[k].cor;
+                      break;
                     }
-                    if(progs[i].local == "maloca"){
-                      progs[i].cor = "blue";
-                    }
-                    if (progs[i].local == this.filtro || this.filtro == "Todos") {
-                      progs2[j].progs.push(progs[i]);
-                      console.log("progs3: ",progs2);
-                    }
+                  }
+
                     break;
                   }
                   if(j == progs2.length - 1){
                     let progsT:any = [];
-                    if(progs[i].local == "auditório"){
-                      progs[i].cor = "red";
+                    
+                    for (let k = 0; k < this.locais.length; k++) {
+                      if(progs[i].local == this.Trim(this.locais[k].local)){
+                        progs[i].cor = this.locais[k].cor;
+                        break;
+                      }
                     }
-                    if(progs[i].local == "maloca"){
-                      progs[i].cor = "blue";
-                    }
+
                     if (progs[i].local == this.filtro || this.filtro == "Todos") {
                       progsT.push(progs[i]);
                       if(horaP == horaA || (horaP <= horaA && horaA <= horaPF)){
@@ -162,12 +168,14 @@ export class HomePage {
                 }
               }else{
                 let progsT:any = [];
-                if(progs[i].local == "auditório"){
-                  progs[i].cor = "red";
+
+                for (let k = 0; k < this.locais.length; k++) {
+                  if(progs[i].local == this.Trim(this.locais[k].local)){
+                    progs[i].cor = this.locais[k].cor;
+                    break;
+                  }
                 }
-                if(progs[i].local == "maloca"){
-                  progs[i].cor = "blue";
-                }
+
                 if (progs[i].local == this.filtro || this.filtro == "Todos") {
                   progsT.push(progs[i]);
                   if(horaP == horaA || (horaP <= horaA && horaA <= horaPF)){
@@ -190,10 +198,19 @@ export class HomePage {
           }
         });
   }
+  
+  ionViewDidLeave(){
+    this.cont = 0;
+  }
 
   loop(){
+    let that = this;
     setTimeout(() => {
-      this.ProgOrder(true);
+      if(that.cont > 0){
+        that.ProgOrder(true);
+      }else{
+        console.log("cont menor que zero");
+      }
     }, 10000);
   }
 }

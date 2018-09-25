@@ -5,7 +5,7 @@
               <button ion-button (click)="sideMenu()" clear item-start icon-only>
                   <img id="menu" src="assets/images/menu_b.svg" /> 
               </button>
-              <ion-title text-center><h5 id="titulo" text-center>Adicionar Palestrantes</h5></ion-title>
+              <ion-title text-center><h5 id="titulo" text-center>Editar Palestrantes</h5></ion-title>
           </ion-row>
   </ion-navbar>
 </ion-header>
@@ -13,7 +13,7 @@
 <ion-content  id="fundo_app" >
   <div class="centroTotal">
     <div id="add">
-      <form [formGroup]="signupForm" novalidate>
+      <form *ngIf="palestrante != null" [formGroup]="signupForm" novalidate>
         <ion-item id="semCor">
           <label for="myInput">
             <div id="center">
@@ -24,23 +24,23 @@
         </ion-item>
         <ion-item id="semCor">
           <ion-label id="letraBranca"  stacked>Nome completo</ion-label>
-          <ion-input id="letraBranca" formControlName="nome" type="text" placeholder="Nome completo"></ion-input>
+          <ion-input id="letraBranca" [ngModel]="palestrante.nome" formControlName="nome" type="text" placeholder="Nome completo"></ion-input>
         </ion-item>
         <ion-item id="semCor">
           <ion-label id="letraBranca"  stacked>Formação</ion-label>
-          <ion-input id="letraBranca" formControlName="formacao" type="text" placeholder="Formação"></ion-input>
+          <ion-input id="letraBranca" [ngModel]="palestrante.formacao" formControlName="formacao" type="text" placeholder="Formação"></ion-input>
         </ion-item>
         <ion-item id="semCor">
             <ion-label id="letraBranca"  stacked>Descrição</ion-label>
-            <ion-input id="letraBranca" formControlName="desc" type="text" placeholder="Descrição"></ion-input>
+            <ion-input id="letraBranca" [ngModel]="palestrante.desc" formControlName="desc" type="text" placeholder="Descrição"></ion-input>
           </ion-item>
         <ion-item id="semCor">
           <ion-label id="letraBranca"  stacked>Telefone para contato</ion-label>
-          <ion-input id="letraBranca" formControlName="telefone" type="number" placeholder="Numero de telefone"></ion-input>
+          <ion-input id="letraBranca" [ngModel]="palestrante.telefone" formControlName="telefone" type="number" placeholder="Numero de telefone"></ion-input>
         </ion-item>
         <ion-item id="semCor">
           <ion-label id="letraBranca" stacked>Email</ion-label>
-          <ion-input id="letraBranca" formControlName="email" type="email" placeholder="Seu email" [class.invalid]="!signupForm.controls.email.valid && blur">
+          <ion-input id="letraBranca" [ngModel]="palestrante.email" formControlName="email" type="email" placeholder="Seu email" [class.invalid]="!signupForm.controls.email.valid && blur">
           </ion-input>
         </ion-item>
         <ion-item id="semCor" class="error-message" *ngIf="!signupForm.controls.email.valid && signupForm.controls.email.dirty">

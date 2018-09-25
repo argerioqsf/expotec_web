@@ -6,41 +6,51 @@
                   <img id="voltar" src="assets/images/voltar.png" /> 
               </button>
               <ion-title text-center><h5 id="titulo" text-center>Detalhes</h5></ion-title>
+              <button id="trash" ion-button (click)="progEdit()" clear item-start icon-only>
+                  <ion-icon color="light" name="md-create"></ion-icon> 
+              </button>
+              <button id="trash" ion-button (click)="presentActionSheet()" clear item-start icon-only>
+                  <ion-icon color="danger" name="md-trash"></ion-icon> 
+              </button>
           </ion-row>
   </ion-navbar>
 </ion-header>
 
 <ion-content id="fundo_app">
-    <div id="cardInfo">
-        <div *ngIf="prog.imagem" id="centro">
-            <img id="logoMaratona" src="{{prog.imagem}}"/>
+    <div *ngIf="prog != null">
+        <div id="cardInfo">
+            <div *ngIf="prog.imagem && prog.tipo == 'maratona'" id="centro">
+                <img id="logoMaratona" src="{{prog.imagem}}"/>
+            </div>
+            <p id="detalheLocal" [ngStyle]="{'border-left': '6px solid ' + prog.cor}">{{prog.local}}</p>
+            <h4><strong>{{prog.titulo}}</strong></h4>
+            <p>{{prog.dia}}, {{prog.horario}}</p>
+            <p>{{prog.tipo}}</p>
         </div>
-        <p id="detalheLocal" [ngStyle]="{'border-left': '6px solid ' + prog.cor}">{{prog.local}}</p>
-        <h4><strong>{{prog.titulo}}</strong></h4>
-        <p>{{prog.dia}}, {{prog.horario}}</p>
-        <p>{{prog.tipo}}</p>
-    </div>
-    <h6 id="subtitulo">DESCRIÇÃO</h6>
-    <div padding id="cardInfoDesc">
-        <p>{{prog.desc}} <span *ngIf="prog.tipo == 'maratona'"> .Para mais informações e regulamento da maratona acesse o link: <a href="https://drive.google.com/file/d/1rgY-35UAUzhy1rZiYNEjiKnQg-GWhVeY/view">EDITAL</a> </span> </p>
-    </div>
-    <h6 id="subtitulo">PALESTRANTES</h6>
-    <div *ngIf="palestrantes != null && palestrantes.length > 0">
-        <div *ngFor="let palestrante of palestrantes" (click)="infoPalestrantes(palestrante)">
-            <ion-item no-lines>
-                <ion-avatar item-start>
-                    <img src="{{palestrante.imagem}}">
-                </ion-avatar>
-                <p>{{palestrante.nome}}</p>
+        <h6 id="subtitulo">DESCRIÇÃO</h6>
+        <div padding id="cardInfoDesc">
+            <p>{{prog.desc}} <span *ngIf="prog.tipo == 'maratona'"> .Para mais informações e regulamento da maratona acesse o link: <a href="https://drive.google.com/file/d/1rgY-35UAUzhy1rZiYNEjiKnQg-GWhVeY/view">EDITAL</a> </span> </p>
+        </div>
+        <h6 id="subtitulo">PALESTRANTES</h6>
+        <div *ngIf="palestrantes != null">
+            <div *ngFor="let palestrante of palestrantes" (click)="infoPalestrantes(palestrante)">
+                <ion-item *ngIf="palestrantes.length > 0"no-lines>
+                    <ion-avatar item-start>
+                        <img src="{{palestrante.imagem}}">
+                    </ion-avatar>
+                    <p>{{palestrante.nome}}</p>
+                </ion-item>
+            </div>
+            <ion-item *ngIf="palestrantes.length == 0" no-lines>
+                <p>Não há palestrantes</p>
             </ion-item>
         </div>
+        <div *ngIf="palestrantes == null"  id="centro">
+            <ion-spinner id="spinner" color="light"  name="ios-small"></ion-spinner><br>
+        </div>
+        <div style="color: white;" *ngIf="palestrantes == null"  id="centro">
+            PROCURANDO PALESTRANTES
+        </div>
     </div>
-    <div *ngIf="palestrantes == null || palestrantes.length == 0"  id="centro">
-        <ion-spinner id="spinner" color="light"  name="ios-small"></ion-spinner><br>
-    </div>
-    <div style="color: white;" *ngIf="palestrantes == null || palestrantes.length == 0"  id="centro">
-        PROCURANDO PALESTRANTES
-    </div>
-    
 
 </ion-content>
