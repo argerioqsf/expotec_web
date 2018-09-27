@@ -31,8 +31,11 @@ export class ProgsGeralPage {
               private viewCtrl: ViewController,
               private platform: Platform,
               private backgroundMode: BackgroundMode) {
-              this.progOn();
-              this.locais = firebaseProvider.getLocais();
+              firebaseProvider.getLocais().then(locais=>{
+                this.locais =  locais;
+                this.progOn();
+                console.log("locais: ", this.locais);
+              });
               this.platform.registerBackButtonAction(() => {
                 if(!this.viewCtrl.enableBack()) { 
                   this.backgroundMode.moveToBackground();

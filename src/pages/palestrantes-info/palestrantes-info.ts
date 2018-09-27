@@ -21,6 +21,7 @@ export class PalestrantesInfoPage {
 
   palestrante:any = null;
   id = null;
+  edit = false;
   constructor(public navCtrl: NavController, 
               public navParams: NavParams,
               private platform: Platform,
@@ -64,7 +65,10 @@ export class PalestrantesInfoPage {
   }
 
   ionViewDidLeave(){
+    if(this.edit == false){
+      console.log('refOff palestrantes/+this.id');
     this.firebaseProvider.refOff("palestrantes/"+this.palestrante.id);
+    }
   }
 
   presentActionSheet() {
@@ -91,8 +95,10 @@ export class PalestrantesInfoPage {
   
   palestranteEdit(){
     console.log("palestranteEdit: ",this.palestrante);
+    this.edit = true;
     let modal = this.modalCtrl.create("palestrantes-edit",{id:this.palestrante.id});
     modal.onDidDismiss(data => {
+      this.edit = false;
       this.platform.registerBackButtonAction(() => {
         this.viewCtrl.dismiss();
       });

@@ -1,13 +1,14 @@
-<ion-header >
-  <ion-navbar color="navbar">
-          <ion-row>
-              <button ion-button (click)="sideMenu()" clear item-start icon-only>
-                  <img id="menu" src="assets/images/menu_b.svg" /> 
-              </button>
-              <ion-title text-center><h5 id="titulo" text-center>Editar programação</h5></ion-title>
-          </ion-row>
-  </ion-navbar>
-</ion-header>
+
+<ion-header no-border>
+    <ion-navbar color="navbar">
+            <ion-row>
+                <button ion-button (click)="voltar()" clear item-start icon-only>
+                    <img id="voltar" src="assets/images/voltar.png" /> 
+                </button>
+                <ion-title text-center><h5 id="titulo" text-center>Editar programação</h5></ion-title>
+            </ion-row>
+    </ion-navbar>
+  </ion-header>
 
 <ion-content padding id="fundo_app">
   <div id="centro" *ngIf="!addPalest">
@@ -20,7 +21,7 @@
         <ion-item>
           <ion-label>Tipo de programação:</ion-label>
           <ion-select [(ngModel)]="prog.tipo" formControlName="tipo">
-              <ion-option *ngFor="let prog of progs" value="{{prog.prog}}">{{prog.prog}}</ion-option>
+              <ion-option *ngFor="let prog of progs" value="{{prog}}">{{prog}}</ion-option>
           </ion-select>
         </ion-item>
         <ion-item *ngIf="signupForm.value.tipo == 'maratona'">
@@ -104,8 +105,18 @@
             </button>
         </div>
         <ion-searchbar (ionInput)="getUsers($event)"></ion-searchbar>
-        <ion-list padding>
+        <ion-list *ngIf="palestrantesPesq != null" padding>
             <ion-item *ngFor="let palestrante of palestrantesPesq" (click)="AddPart(palestrante)">
+              <ion-thumbnail item-start>
+                  <img src="{{palestrante.imagem}}">
+              </ion-thumbnail>
+              <h2>{{palestrante.nome}}</h2>
+              <h4>{{palestrante.formacao}}</h4>
+            </ion-item>
+            <h6 *ngIf="palestrantesPesq.length == 0 " id="vazio">Sem resposta para sua pesquisa</h6>
+        </ion-list>
+        <ion-list *ngIf="palestrantesPesq == null" padding>
+            <ion-item *ngFor="let palestrante of palestrantesPerfil" (click)="AddPart(palestrante)">
               <ion-thumbnail item-start>
                   <img src="{{palestrante.imagem}}">
               </ion-thumbnail>

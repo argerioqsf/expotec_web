@@ -139,30 +139,23 @@ export class FirebaseProvider {
   }
   
   getLocais(){
-    let locais = [
-                  {local:"Todos",cor:"#f4f4f4"},
-                  {local:"Maloca",cor:"blue"},
-                  {local:"Auditório",cor:"red"},
-                  {local:"Campo de futebol",cor:"rgb(184, 74, 31)"},
-                  {local:"Quadra1",cor:"rgb(198, 209, 36)"},
-                  {local:"Quadra2",cor:"rgb(75, 40, 26)"},
-                  {local:"Planetário",cor:"rgb(18, 201, 207)"}];
-    return locais;
+    return new Promise((resolve,reject)=>{
+      firebase.database().ref("config/locais").once("value",locaisSnap=>{
+        console.log("config/locais: ", locaisSnap.val());
+          resolve(locaisSnap.val());
+        });
+      });
   }
 
   getProgs(){
-    let progs = [
-                  {prog:"plestra"},
-                  {prog:"maratona"},
-                  {prog:"entretenimento"},
-                  {prog:"campeonato"},
-                  {prog:"treinamento"},
-                  {prog:"workshop"},
-                  {prog:"avisos"},
-                  {prog:"abertura"},
-                  {prog:"encerramento"},
-                  {prog:"interação"}];
-    return progs;
+    let progsT;
+    return new Promise((resolve,reject)=>{
+      firebase.database().ref("config/progs").once("value",progs=>{
+        console.log("config/progs: ", progs.val());
+        progsT = progs.val();
+        resolve(progsT);
+      });
+    });
   }
 
 }

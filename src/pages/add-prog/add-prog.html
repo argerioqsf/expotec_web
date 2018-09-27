@@ -21,10 +21,10 @@
         <ion-item>
           <ion-label>Tipo de programação:</ion-label>
           <ion-select formControlName="tipo">
-            <ion-option *ngFor="let prog of progs" value="{{prog.prog}}">{{prog.prog}}</ion-option>
+            <ion-option *ngFor="let prog of progs" value="{{prog}}">{{prog}}</ion-option>
           </ion-select>
         </ion-item>
-        <ion-item id="semCor" *ngIf="signupForm.value.tipo == 'maratona'">
+        <ion-item id="semCor" *ngIf="signupForm.value.tipo == 'Maratona'">
           <label for="myInput" >
             <div  id="center">
                 <img padding id="fotos" src={{imageURL}} />

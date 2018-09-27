@@ -52,8 +52,14 @@ export class AddProgPage {
               private camera: Camera,
               private menuCtrl: MenuController,
               private toastCtrl: ToastController) {
-  this.locais = firebaseProvider.getLocais();
-  this.progs = firebaseProvider.getProgs();
+  firebaseProvider.getLocais().then(locais=>{
+    this.locais =  locais;
+    console.log("locais: ", this.locais);
+  });
+  firebaseProvider.getProgs().then(progs=>{
+    this.progs = progs;
+    console.log("progs: ", this.progs);
+  });
   this.imageuid = this.generateUUID();
   this.palestrantesOn();
   this.signupForm = formBuilder.group({
@@ -170,6 +176,12 @@ export class AddProgPage {
 
   enviarArquivo(){
     if(this.arquivo != null){
+      let loading = this.loadingCtrl.create({
+        spinner: 'ios',
+        duration: 30000
+      });
+      loading.present();
+      let ok = false;
       let metadata = {
         contentType: this.arquivo.type
       };
@@ -179,16 +191,36 @@ export class AddProgPage {
         let progress:any = (savedPicture.bytesTransferred / savedPicture.totalBytes) * 100;
         progress = parseInt(progress);
         console.log('Upload is ' + progress + '% done');
+        if (progress == 100) {
+        }
       }, error => {
+        loading.dismiss();
         console.log("Erro imagemupload");
 			},()=>{
         upload.snapshot.ref.getDownloadURL().then((downloadURL)=>{
           console.log('File available at', downloadURL);
           this.imageURL = downloadURL;
+          ok = true;
+          loading.dismiss();
         console.log("OK imagemupload");
         });
       });
-
+      loading.onDidDismiss(() => {
+        console.log('Ok : ',ok);
+        if(ok == false){
+          let alert = this.alertCtrl.create({
+            title:"Houve um erro na comunicação com o servidor",
+            subTitle:"verifique sua internet",
+          });
+          alert.present();
+        }
+        if(ok == true){
+          let alert = this.alertCtrl.create({
+            title:"Imagem adicionada com sucesso!"
+          });
+          alert.present();
+          }
+        });
     }
   }
 
@@ -223,7 +255,7 @@ export class AddProgPage {
 
   addProg(){
     console.log("singupForm: ",this.signupForm.value);
-    if (this.signupForm.valid && this.palestrantes.length > 0 && ((this.signupForm.value.tipo == "maratona" && this.imageURL != "assets/images/circulo.png") || this.signupForm.value.tipo != "maratona") ){
+    if (this.signupForm.valid && this.palestrantes.length > 0 && ((this.signupForm.value.tipo == "Maratona" && this.imageURL != "assets/images/circulo.png") || this.signupForm.value.tipo != "Maratona") ){
       let loading = this.loadingCtrl.create({
         spinner: 'ios',
         duration: 30000
@@ -244,10 +276,11 @@ export class AddProgPage {
       this.signupForm.value.horaI = null;
       this.signupForm.value.horaF = null;
       this.signupForm.value.local = this.Trim(this.signupForm.value.local);
-      if(this.signupForm.value.tipo == "maratona"){
+      if(this.signupForm.value.tipo == "Maratona"){
         this.signupForm.value.imagem = this.imageURL;
         this.signupForm.value.imagemUid = this.imageuid;
       }
+      this.signupForm.value.tipo = this.signupForm.value.tipo.toLowerCase();
     console.log("singupForm: ",this.signupForm.value);
     let id = this.generateUUID();
     this.signupForm.value.id = id;

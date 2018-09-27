@@ -36,9 +36,12 @@ export class ProgsInfoPage {
     this.platform.registerBackButtonAction(() => {
       this.viewCtrl.dismiss();
     });
-    this.locais = firebaseProvider.getLocais();
-    console.log("prog: ", this.navParams.get("id"));
-    this.getId();
+    firebaseProvider.getLocais().then(locais=>{
+      this.locais =  locais;
+      console.log("locais: ", this.locais);
+      console.log("prog: ", this.navParams.get("id"));
+      this.getId();
+    });
   }
 
   ionViewDidLoad() {
@@ -52,6 +55,7 @@ export class ProgsInfoPage {
 
   ionViewDidLeave(){
     if(this.edit == false){
+      console.log('refOff prog/+this.id');
       this.firebaseProvider.refOff("prog/"+this.id);
     }
   }

@@ -40,7 +40,7 @@ export class ProgsEditPage {
   palestrantes2 = [];
   palestrantesPerfil:any = [];
   addPalest = false;
-  palestrantesPesq = [];
+  palestrantesPesq = null;
   id = null;
   imageTest;
   locais;
@@ -57,9 +57,15 @@ export class ProgsEditPage {
               private menuCtrl: MenuController,
               private toastCtrl: ToastController,
               private viewCtrl: ViewController) {
-  this.getId();
-  this.locais = firebaseProvider.getLocais();
-  this.progs = firebaseProvider.getProgs();
+  firebaseProvider.getLocais().then(locais=>{
+    this.locais =  locais;
+    console.log("locais: ", this.locais);
+    firebaseProvider.getProgs().then(progs=>{
+      this.progs = progs;
+      this.getId();
+      console.log("progs: ", this.progs);
+    });
+  });
   this.signupForm = formBuilder.group({
     desc: ["",
           Validators.compose([Validators.maxLength(580), Validators.required])
@@ -155,7 +161,7 @@ export class ProgsEditPage {
         return (usuario.nome.toLowerCase().indexOf(val.toLowerCase()) > -1);
       });
     }else{
-      this.palestrantesPesq = [];
+      this.palestrantesPesq = null;
     }
   }
 
@@ -262,6 +268,7 @@ export class ProgsEditPage {
   }
 
   ionViewDidLeave(){
+    console.log('refOff palestrantes/+this.id');
     this.firebaseProvider.refOff("palestrantes/"+this.id);
   }
 
@@ -286,7 +293,7 @@ export class ProgsEditPage {
 
   addProg(){
     console.log("singupForm: ",this.signupForm.value);
-    if (this.signupForm.valid && this.palestrantes.length > 0 && ((this.signupForm.value.tipo == "maratona" && this.imageURL != "assets/images/circulo.png") || this.signupForm.value.tipo != "maratona") ){
+    if (this.signupForm.valid && this.palestrantes.length > 0 && ((this.signupForm.value.tipo == "Maratona" && this.imageURL != "assets/images/circulo.png") || this.signupForm.value.tipo != "Maratona") ){
       let loading = this.loadingCtrl.create({
         spinner: 'ios',
         duration: 30000
@@ -307,10 +314,11 @@ export class ProgsEditPage {
       this.signupForm.value.horaI = null;
       this.signupForm.value.horaF = null;
       this.signupForm.value.local = this.Trim(this.signupForm.value.local);
-      if(this.signupForm.value.tipo == "maratona"){
+      if(this.signupForm.value.tipo == "Maratona"){
         this.signupForm.value.imagem = this.imageURL;
         this.signupForm.value.imagemUid = this.imageuid;
       }
+      this.signupForm.value.tipo = this.signupForm.value.tipo.toLowerCase();
     console.log("singupForm: ",this.signupForm.value);
     console.log("prog: ",this.prog);
     let id = this.generateUUID();

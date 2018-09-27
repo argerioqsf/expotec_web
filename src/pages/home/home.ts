@@ -25,10 +25,13 @@ export class HomePage {
               private backgroundMode: BackgroundMode,
               private splashScreen: SplashScreen) {
                 this.splashScreen.hide();
-                this.locais = firebaseProvider.getLocais();
-              this.progOn().then(resolve=>{
-                this.ProgOrder(true);
-              });
+                firebaseProvider.getLocais().then(locais=>{
+                  this.locais =  locais;
+                  console.log("locais: ", this.locais);
+                  this.progOn().then(resolve=>{
+                    this.ProgOrder(true);
+                  });
+                });
               this.platform.registerBackButtonAction(() => {
                 if(!this.viewCtrl.enableBack()) { 
                   this.backgroundMode.moveToBackground();
