@@ -29,7 +29,12 @@ plugins/android.json
 plugins/ios.json
 www/
 $RECYCLE.BIN/
+src/app/firebase-cred.js
+*.apk
+*.keystore
 
+src/credentials_firebase.ts
+minha-chave.keystore
 .DS_Store
 Thumbs.db
 UserInterfaceState.xcuserstate

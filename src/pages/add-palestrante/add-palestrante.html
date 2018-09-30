@@ -50,7 +50,7 @@
     </div>
       <div class="edit" id="centro">
         <ion-fab bottom>
-            <button ion-fab (click)="addPalestrante()" color="blueDark" [disabled]="!signupForm.valid"><ion-icon name="md-checkmark"></ion-icon></button>
+            <button ion-fab (click)="addPalestrante()" color="blueDark" [disabled]="!this.signupForm.controls.nome.valid"><ion-icon name="md-checkmark"></ion-icon></button>
         </ion-fab>
       </div>
   </div>

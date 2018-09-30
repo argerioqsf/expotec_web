@@ -36,9 +36,9 @@ export class AddProgPage {
   arquivo:any = null;
   palestrantes = [];
   palestrantes2 = [];
-  palestrantesPerfil:any = [];
+  palestrantesPerfil:any = null;
   addPalest = false;
-  palestrantesPesq = [];
+  palestrantesPesq = null;
   locais;
   progs;
   @ViewChild('myInput2') myInput: ElementRef;
@@ -117,7 +117,7 @@ export class AddProgPage {
         return (usuario.nome.toLowerCase().indexOf(val.toLowerCase()) > -1);
       });
     }else{
-      this.palestrantesPesq = [];
+      this.palestrantesPesq = null;
     }
   }
 

@@ -148,7 +148,7 @@ export class AddPalestrantePage {
   }
   
   addPalestrante(){
-    if (this.signupForm.valid){
+    if (this.signupForm.controls.nome.valid){
       let loading = this.loadingCtrl.create({
         spinner: 'ios',
         duration: 30000

@@ -193,7 +193,7 @@ export class ProgsInfoPage {
       }
       if(ok == true){
         let alert = this.alertCtrl.create({
-          title:"Programação exluuida com sucesso!"
+          title:"Programação excluida com sucesso!"
         });
         alert.present();
         }

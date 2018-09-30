@@ -144,7 +144,7 @@ export class PalestrantesInfoPage {
       }
       if(ok == true){
         let alert = this.alertCtrl.create({
-          title:"Programação exluuida com sucesso!"
+          title:"Programação excluida com sucesso!"
         });
         alert.present();
         }
@@ -153,6 +153,7 @@ export class PalestrantesInfoPage {
 
   deletePalestrante2(){
     return new Promise((resolve,reject)=>{
+      this.firebaseProvider.refOff("palestrantes/"+this.palestrante.id);
       this.firebaseProvider.delete("palestrantes/"+this.palestrante.id).then(()=>{
         console.log("Palestrante deletado");
         resolve("OK");

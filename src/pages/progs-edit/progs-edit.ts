@@ -293,7 +293,7 @@ export class ProgsEditPage {
 
   addProg(){
     console.log("singupForm: ",this.signupForm.value);
-    if (this.signupForm.valid && this.palestrantes.length > 0 && ((this.signupForm.value.tipo == "Maratona" && this.imageURL != "assets/images/circulo.png") || this.signupForm.value.tipo != "Maratona") ){
+    if (this.signupForm.valid && this.palestrantes.length > 0 && ((this.signupForm.value.tipo == "maratona" && this.imageURL != "assets/images/circulo.png") || this.signupForm.value.tipo != "maratona") ){
       let loading = this.loadingCtrl.create({
         spinner: 'ios',
         duration: 30000
@@ -314,7 +314,7 @@ export class ProgsEditPage {
       this.signupForm.value.horaI = null;
       this.signupForm.value.horaF = null;
       this.signupForm.value.local = this.Trim(this.signupForm.value.local);
-      if(this.signupForm.value.tipo == "Maratona"){
+      if(this.signupForm.value.tipo == "maratona"){
         this.signupForm.value.imagem = this.imageURL;
         this.signupForm.value.imagemUid = this.imageuid;
       }

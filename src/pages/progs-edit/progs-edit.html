@@ -21,7 +21,7 @@
         <ion-item>
           <ion-label>Tipo de programação:</ion-label>
           <ion-select [(ngModel)]="prog.tipo" formControlName="tipo">
-              <ion-option *ngFor="let prog of progs" value="{{prog}}">{{prog}}</ion-option>
+              <ion-option *ngFor="let prog of progs" value="{{prog.toLowerCase()}}">{{prog}}</ion-option>
           </ion-select>
         </ion-item>
         <ion-item *ngIf="signupForm.value.tipo == 'maratona'">
